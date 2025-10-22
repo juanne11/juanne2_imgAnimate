@@ -1,50 +1,90 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Marker-Based AR with Hiro</title>
-    <meta name="description" content="A-Frame AR with AR.js and a Hiro marker." />
+  <head>
+    <title>Marker-Based AR with Natural Fox Movement</title>
+    <meta name="description" content="A-Frame AR.js Fox animation example" />
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <div style="
-      position: absolute; 
-      bottom: 30px; 
-      left: 50%; 
-      transform: translateX(-50%); 
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
       z-index: 10;">
       <button id="animate-button" style="padding: 12px 24px; font-size: 16px; cursor: pointer;">
-        Start Rotation
+        Start Natural Animation
       </button>
     </div>
-    
+
     <a-scene embedded arjs>
-        <a-assets>
-            <a-asset-item id="Fox" src="./Fox.glb"></a-asset-item>
-        </a-assets>
-        <a-marker preset="hiro">
-            <a-entity id="rotator-parent" position="0 0 0" animation="property: rotation; from:0 0 0; to: 0 0 360; loop: true; dur: 10000; easing: linear; startEvents: start-rotation;">
-            <a-gltf-model
-                src="#Fox"
-                position="0 0.2 0"
-                scale="0.3 0.3 0.3"
-                rotation="-90 0 0"
-                >
-            </a-gltf-model>
-            </a-entity>
-        </a-marker>
-        <a-entity camera></a-entity>
+      <a-assets>
+        <a-asset-item id="Fox" src="./Fox.glb"></a-asset-item>
+      </a-assets>
+
+      <!-- Marker detection -->
+      <a-marker preset="hiro">
+        <!-- Parent for rotation (global spin) -->
+        <a-entity id="rotator-parent" position="0 0 0" animation__rotate="
+            property: rotation;
+            from: 0 0 0;
+            to: 0 360 0;
+            loop: true;
+            dur: 15000;
+            easing: linear;
+            startEvents: start-rotation;">
+          
+          <!-- Fox model with natural movement -->
+          <a-gltf-model
+            id="fox"
+            src="#Fox"
+            position="0 0.2 0"
+            scale="0.3 0.3 0.3"
+            rotation="-90 0 0"
+            animation__breathe="
+              property: position;
+              dir: alternate;
+              dur: 2000;
+              easing: easeInOutSine;
+              loop: true;
+              to: 0 0.3 0;
+              startEvents: start-natural;"
+            animation__head="
+              property: rotation;
+              dir: alternate;
+              dur: 2500;
+              easing: easeInOutSine;
+              loop: true;
+              to: -85 15 0;
+              startEvents: start-natural;"
+            animation__tail="
+              property: rotation;
+              dur: 1000;
+              dir: alternate;
+              loop: true;
+              to: -90 0 10;
+              easing: easeInOutQuad;
+              startEvents: start-natural;">
+          </a-gltf-model>
+
+        </a-entity>
+      </a-marker>
+
+      <a-entity camera></a-entity>
     </a-scene>
-    
+
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const animateButton = document.getElementById('animate-button');
         const rotatorParent = document.getElementById('rotator-parent');
+        const fox = document.getElementById('fox');
 
         animateButton.addEventListener('click', () => {
           rotatorParent.emit('start-rotation');
+          fox.emit('start-natural');
         });
       });
     </script>
-</body>
+  </body>
 </html>
