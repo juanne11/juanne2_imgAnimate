@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Marker-Based AR with Natural Fox Movement</title>
-    <meta name="description" content="A-Frame AR.js Fox animation example" />
+    <title>Marker-Based AR - Natural Walking Fox</title>
+    <meta name="description" content="A-Frame AR.js Fox with natural walking motion" />
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
   </head>
@@ -14,7 +14,7 @@
       transform: translateX(-50%);
       z-index: 10;">
       <button id="animate-button" style="padding: 12px 24px; font-size: 16px; cursor: pointer;">
-        Start Natural Animation
+        Start Walking Fox
       </button>
     </div>
 
@@ -23,49 +23,65 @@
         <a-asset-item id="Fox" src="./Fox.glb"></a-asset-item>
       </a-assets>
 
-      <!-- Marker detection -->
       <a-marker preset="hiro">
-        <!-- Parent for rotation (global spin) -->
-        <a-entity id="rotator-parent" position="0 0 0" animation__rotate="
-            property: rotation;
+        <!-- Parent for smooth rotation -->
+        <a-entity id="rotator-parent" position="0 0 0"
+          animation__rotate="property: rotation;
             from: 0 0 0;
             to: 0 360 0;
             loop: true;
             dur: 15000;
             easing: linear;
             startEvents: start-rotation;">
-          
-          <!-- Fox model with natural movement -->
+
+          <!-- Fox model -->
           <a-gltf-model
             id="fox"
             src="#Fox"
             position="0 0.2 0"
             scale="0.3 0.3 0.3"
             rotation="-90 0 0"
+
+            <!-- breathing / body bounce -->
             animation__breathe="
               property: position;
               dir: alternate;
-              dur: 2000;
+              dur: 1000;
               easing: easeInOutSine;
               loop: true;
-              to: 0 0.3 0;
-              startEvents: start-natural;"
+              to: 0 0.28 0;
+              startEvents: start-walk;"
+
+            <!-- head tilt -->
             animation__head="
               property: rotation;
               dir: alternate;
-              dur: 2500;
+              dur: 1600;
               easing: easeInOutSine;
               loop: true;
-              to: -85 15 0;
-              startEvents: start-natural;"
-            animation__tail="
+              to: -88 10 0;
+              startEvents: start-walk;"
+
+            <!-- small body sway (as walking) -->
+            animation__sway="
               property: rotation;
-              dur: 1000;
               dir: alternate;
-              loop: true;
-              to: -90 0 10;
+              dur: 900;
               easing: easeInOutQuad;
-              startEvents: start-natural;">
+              loop: true;
+              to: -90 0 5;
+              startEvents: start-walk;"
+
+            <!-- simulate step movement -->
+            animation__step="
+              property: position;
+              dir: alternate;
+              dur: 800;
+              easing: easeInOutSine;
+              loop: true;
+              to: 0.05 0.2 -0.05;
+              startEvents: start-walk;"
+          >
           </a-gltf-model>
 
         </a-entity>
@@ -76,13 +92,13 @@
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        const animateButton = document.getElementById('animate-button');
+        const button = document.getElementById('animate-button');
         const rotatorParent = document.getElementById('rotator-parent');
         const fox = document.getElementById('fox');
 
-        animateButton.addEventListener('click', () => {
+        button.addEventListener('click', () => {
           rotatorParent.emit('start-rotation');
-          fox.emit('start-natural');
+          fox.emit('start-walk');
         });
       });
     </script>
