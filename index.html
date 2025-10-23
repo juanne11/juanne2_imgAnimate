@@ -25,7 +25,7 @@
 
       <a-marker preset="hiro">
         <!-- Parent for smooth rotation -->
-        <a-entity id="rotator-parent" position="0 0 0"
+        <a-entity id="rotator-parent" position="0 0 -90"
           animation__rotate="property: rotation;
             from: 0 0 0;
             to: 0 360 0;
@@ -100,10 +100,30 @@
           rotatorParent.emit('start-rotation');
           fox.emit('start-walk');
         });
+
+        // 🦊 Tambahkan animasi ekor setelah model dimuat
+        fox.addEventListener('model-loaded', () => {
+          const tail = fox.getObject3D('mesh').getObjectByName('Tail') ||
+                       fox.getObject3D('mesh').getObjectByName('tail') ||
+                       fox.getObject3D('mesh').getObjectByName('Bone_tail');
+
+          if (tail) {
+            // Buat animasi ekor bergoyang kanan kiri
+            fox.sceneEl.object3D.addEventListener('tick', () => {
+              const time = Date.now() * 0.0025;
+              tail.rotation.y = Math.sin(time) * 0.5;
+              tail.rotation.x = Math.cos(time) * 0.1;
+            });
+            console.log('Tail animation added');
+          } else {
+            console.warn('Tail not found in model');
+          }
+        });
       });
     </script>
   </body>
 </html>
+
 
 
 
